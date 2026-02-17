@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Волчок</title>
+
+<style>
+
+/* БАЗА */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f4f6f9;
+}
+
+.screen {
+  display: none;
+  padding: 20px;
+}
+
+.active {
+  display: block;
+}
+
+.topbar {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* КНОПКИ */
+
+.button {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  border: none;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.primary {
+  background: #111;
+  color: white;
+}
+
+.secondary {
+  background: white;
+  border: 1px solid #ddd;
+}
+
+/* ТОВАРЫ */
+
+.product-row {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.product-row.active {
+  background: #e6f2ff;
+  border: 2px solid #b3d7ff;
+}
+
+.product-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.controls-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.qty-btn {
+  width: 46px;
+  height: 46px;
+  font-size: 24px;
+  border-radius: 12px;
+  border: none;
+  background: #111;
+  color: white;
+}
+
+.qty-value {
+  font-size: 20px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.pack {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ДАТА */
+
+input[type="date"] {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin: 12px 0 20px 0;
+}
+
+.back {
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+</style>
+</head>
+<body>
+
+<div id="screen1" class="screen active">
+  <div class="topbar">🐾 Выйти на охоту на:</div>
+  <div id="suppliers"></div>
+</div>
+
+<div id="screen2" class="screen">
+  <button class="back" onclick="goTo(1)">← Назад</button>
+  <div id="supplierInfo"></div>
+  <div>Заказ на:</div>
+  <input type="date" id="orderDate">
+  <button class="button primary" onclick="goToProducts()">Выбрать добычу</button>
+</div>
+
+<div id="screen3" class="screen">
+  <button class="back" onclick="goTo(2)">← Назад</button>
+  <div id="products"></div>
+  <button class="button primary" onclick="submitOrder()">Сделать заказ</button>
+</div>
+
+<script>
+
+const API = "ВСТАВЬ_СЮДА_EXEC_ССЫЛКУ";
+
+let selectedSupplier = null;
+let productsData = [];
+
+/* НАВИГАЦИЯ */
+
+function goTo(n){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen'+n).classList.add('active');
+}
+
+/* ЗАГРУЗКА ПОСТАВЩИКОВ */
+
+fetch(`${API}?action=getSuppliers`)
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('suppliers');
+    data.forEach(name => {
+      const btn = document.createElement('button');
+      btn.className = "button secondary";
+      btn.textContent = name;
+      btn.onclick = () => selectSupplier(name);
+      container.appendChild(btn);
+    });
+  });
+
+/* ВЫБОР ПОСТАВЩИКА */
+
+function selectSupplier(name){
+  selectedSupplier = name;
+
+  fetch(`${API}?action=getSupplierInfo&name=${encodeURIComponent(name)}`)
+    .then(res => res.json())
+    .then(info => {
+
+      document.getElementById('supplierInfo').innerHTML = `
+        <div class="product-row">
+          <b>${name}</b><br><br>
+          Минимальный заказ: ${info.minSum}<br>
+          Приём заказов: ${info.orderTime}<br>
+          Доставка: ${info.deliveryTime}
+        </div>
+      `;
+
+      goTo(2);
+    });
+}
+
+/* ЗАГРУЗКА ТОВАРОВ */
+
+function goToProducts(){
+
+  const date = document.getElementById('orderDate').value;
+  if(!date){
+    alert('Укажите дату');
+    return;
+  }
+
+  fetch(`${API}?action=getProducts&name=${encodeURIComponent(selectedSupplier)}`)
+    .then(res => res.json())
+    .then(data => {
+
+      productsData = data;
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+
+      data.forEach((p, i) => {
+        container.innerHTML += `
+          <div class="product-row" id="row_${i}">
+            <div class="product-title">${p.name}</div>
+
+            <div class="controls-line">
+              <div class="controls">
+                <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+                <span id="qty_${i}" class="qty-value">0</span>
+                <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+              </div>
+
+              <div class="pack">${p.pack}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      goTo(3);
+    });
+}
+
+/* ИЗМЕНЕНИЕ КОЛИЧЕСТВА */
+
+function changeQty(i, delta){
+  let el = document.getElementById('qty_'+i);
+  let val = parseInt(el.textContent);
+  val += delta;
+  if(val < 0) val = 0;
+  el.textContent = val;
+
+  const row = document.getElementById('row_'+i);
+
+  if(val > 0){
+    row.classList.add('active');
+  } else {
+    row.classList.remove('active');
+  }
+}
+
+/* ОТПРАВКА */
+
+function submitOrder(){
+
+  const dateRaw = document.getElementById('orderDate').value;
+  const date = new Date(dateRaw);
+  const formatted = date.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
+
+  let text = `${selectedSupplier}\n`;
+  text += `Заказ на ${formatted}\n`;
+
+  productsData.forEach((p, i) => {
+    const qty = parseInt(document.getElementById('qty_'+i).textContent);
+    if(qty > 0){
+      text += `${p.name} — ${qty}\n`;
+    }
+  });
+
+  if(text.split('\n').length <= 2){
+    alert('Выберите товары');
+    return;
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Заказ скопирован. Отправьте его в Telegram.');
+  });
+
+  fetch(API, {
+    method: "POST",
+    body: JSON.stringify({
+      text: text,
+      supplier: selectedSupplier,
+      date: formatted
+    })
+  });
+
+  goTo(1);
+}
+
+</script>
+
+</body>
+</html>
