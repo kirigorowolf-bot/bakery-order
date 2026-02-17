@@ -138,7 +138,7 @@ input[type="date"] {
 <body>
 
 <div id="screen1" class="screen active">
-  <div class="topbar">🐾 Выйти на охоту на:</div>
+  <div class="topbar">🐾 Начать охоту на:</div>
   <div id="suppliers"></div>
 </div>
 
@@ -289,7 +289,7 @@ function submitOrder(){
   }
 
   navigator.clipboard.writeText(text).then(() => {
-    alert('Заказ скопирован. Отправьте его в Telegram.');
+    alert('🐺 Волчок выходит на охоту. Заказ скопирован. Отправьте его в ТГ!');
   });
 
   fetch(API, {
@@ -308,3 +308,4 @@ function submitOrder(){
 
 </body>
 </html>
+
