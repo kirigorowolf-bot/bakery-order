@@ -72,20 +72,37 @@ input[type="date"]{
   transform:translateX(-50%) translateY(0);
   opacity:1
 }
-  .section-block{
+.section-block{
   margin-bottom:14px;
-  border-radius:14px;
+  border-radius:16px;
   overflow:hidden;
   box-shadow:0 4px 14px rgba(0,0,0,.05);
 }
 
 .section-header{
-  background:#111;
-  color:#fff;
-  padding:16px;
+  background:#e6f2ff;        /* бледно-голубой */
+  color:#111;                /* чёрный текст */
+  padding:18px;
   font-weight:600;
   font-size:18px;
   cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:background .2s ease;
+}
+
+.section-header:active{
+  background:#d6eaff;
+}
+
+.section-arrow{
+  font-size:18px;
+  transition:transform .25s ease;
+}
+
+.section-arrow.rotate{
+  transform:rotate(180deg);
 }
 
 .section-products{
@@ -97,6 +114,7 @@ input[type="date"]{
 .section-products.open{
   display:block;
 }
+
 </style>
 </head>
 <body>
@@ -231,9 +249,10 @@ function goToProducts(){
         container.innerHTML += `
           <div class="section-block">
             <div class="section-header"
-                 onclick="toggleSection('${currentSection}')">
-              ${p.name}
-            </div>
+     onclick="toggleSection('${currentSection}', this)">
+  <span>${p.name}</span>
+  <span class="section-arrow">⮟</span>
+</div>
             <div class="section-products" id="${currentSection}">
             </div>
           </div>
@@ -268,9 +287,13 @@ function renderProduct(p,i){
   `;
 }
 
-function toggleSection(id){
-  const el = document.getElementById(id);
-  el.classList.toggle("open");
+function toggleSection(id, header){
+
+  const content = document.getElementById(id);
+  content.classList.toggle("open");
+
+  const arrow = header.querySelector(".section-arrow");
+  arrow.classList.toggle("rotate");
 }
 
 /* Изменение количества */
@@ -321,7 +344,6 @@ function openReview(){
   /* ===== ЛОГИКА ДЛЯ "СИРОПЫ" ===== */
 
   if(selectedSupplier === "Сиропы"){
-  document.getElementById('totalSum').textContent = total + " ₽";
    
     list.innerHTML += `
       <div class="divider"></div>
@@ -355,7 +377,7 @@ function openReview(){
   }
 
   /* ===== ПРОВЕРКА МИНИМАЛКИ ===== */
-
+  if(selectedSupplier !== "Сиропы"){ 
   if(finalTotal >= minOrderSum){
 
     status.innerHTML = "✅ Всё окей, заказывай!";
@@ -374,7 +396,7 @@ function openReview(){
 
   goTo(4);
 }
-
+}
 /* Отправка */
 function submitOrder(){
 
@@ -428,6 +450,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
