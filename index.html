@@ -5,209 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111111">
-
 <title>Provance Orders</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#f4f6f9;
 }
-/* БАЗА */
+.screen{display:none;padding:20px}
+.active{display:block}
+.topbar{font-size:22px;font-weight:700;margin-bottom:20px}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f4f6f9;
+.button{
+  width:100%;padding:16px;margin-bottom:12px;
+  border-radius:14px;border:none;
+  font-size:18px;font-weight:500;cursor:pointer
 }
+.button:active{transform:scale(.97)}
+.primary{background:#111;color:#fff}
+.primary:disabled{background:#999}
+.secondary{background:#fff;border:1px solid #ddd}
 
-.screen {
-  display: none;
-  padding: 20px;
+.product-row{
+  background:#fff;padding:16px;border-radius:14px;
+  margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.05)
 }
+.product-row.active{background:#e6f2ff;border:2px solid #b3d7ff}
+.product-title{font-size:18px;font-weight:600;margin-bottom:12px}
 
-.active {
-  display: block;
+.controls-line{display:flex;justify-content:space-between;align-items:center}
+.controls{display:flex;gap:14px;align-items:center}
+
+.qty-btn{
+  width:46px;height:46px;font-size:24px;
+  border-radius:12px;border:none;background:#111;color:#fff
 }
+.qty-value{font-size:20px;min-width:30px;text-align:center}
+.pack{font-size:18px;font-weight:600}
 
-.topbar {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-/* КНОПКИ */
-
-.button {
-  width: 100%;
-  padding: 16px;
-  margin-bottom: 12px;
-  border-radius: 14px;
-  border: none;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.08s ease;
-}
-
-.button:active {
-  transform: scale(0.97);
+input[type="date"]{
+  width:100%;padding:14px;font-size:18px;
+  border-radius:12px;border:1px solid #ccc;
+  margin:12px 0 20px
 }
 
-.primary {
-  background: #111;
-  color: white;
+.back{background:none;border:none;font-size:16px;margin-bottom:15px;color:#555}
+
+.divider{height:1px;background:#ddd;margin:20px 0}
+.review-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.total-line{display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-bottom:15px}
+.order-status{font-weight:600;margin-bottom:20px}
+
+.toast{
+  position:fixed;top:20px;left:50%;
+  transform:translateX(-50%) translateY(-120%);
+  background:#111;color:#fff;
+  padding:20px;border-radius:18px;
+  width:90%;max-width:420px;
+  text-align:center;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  opacity:0;transition:.35s;z-index:999
 }
-
-.secondary {
-  background: white;
-  border: 1px solid #ddd;
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1
 }
-
-/* ТОВАРЫ */
-
-.product-row {
-  background: white;
-  padding: 16px;
-  border-radius: 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-}
-
-.product-row.active {
-  background: #e6f2ff;
-  border: 2px solid #b3d7ff;
-}
-
-.product-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.controls-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.qty-btn {
-  width: 46px;
-  height: 46px;
-  font-size: 24px;
-  border-radius: 12px;
-  border: none;
-  background: #111;
-  color: white;
-}
-
-.qty-value {
-  font-size: 20px;
-  min-width: 30px;
-  text-align: center;
-}
-
-.pack {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* ДАТА */
-
-input[type="date"] {
-  width: 100%;
-  padding: 14px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  margin: 12px 0 20px 0;
-}
-
-.back {
-  background: none;
-  border: none;
-  font-size: 16px;
-  margin-bottom: 15px;
-  color: #555;
-}
-/* ===== MOBILE APP SCALE ===== */
-
-@media (max-width: 500px) {
-
-  body {
-    font-size: 20px;
-  }
-
-  .topbar {
-    font-size: 24px;
-  }
-
-  .button {
-    font-size: 20px;
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  .product-title {
-    font-size: 20px;
-  }
-
-  .qty-btn {
-    width: 56px;
-    height: 56px;
-    font-size: 28px;
-    border-radius: 16px;
-  }
-
-  .qty-value {
-    font-size: 24px;
-  }
-
-  .pack {
-    font-size: 20px;
-  }
-
-  .product-row {
-    padding: 20px;
-    border-radius: 18px;
-  }
-
-  input[type="date"] {
-    font-size: 20px;
-    padding: 16px;
-  }
-}
-  .toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-120%);
-  background: #111;
-  color: white;
-  padding: 20px 24px;
-  border-radius: 18px;
-  font-size: 18px;
-  font-weight: 600;
-  width: 90%;
-  max-width: 420px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  opacity: 0;
-  transition: all 0.35s ease;
-  z-index: 999;
-}
-
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
 </style>
 </head>
 <body>
@@ -228,182 +92,170 @@ input[type="date"] {
 <div id="screen3" class="screen">
   <button class="back" onclick="goTo(2)">← Назад</button>
   <div id="products"></div>
-  <button class="button primary" onclick="submitOrder()">Сделать заказ</button>
+  <button class="button primary" onclick="openReview()">Обнюхать</button>
 </div>
+
+<div id="screen4" class="screen">
+  <button class="back" onclick="goTo(3)">← Назад</button>
+  <div class="topbar">Проверка заказа</div>
+  <div id="reviewList"></div>
+  <div class="divider"></div>
+  <div class="total-line">
+    <span>Сумма заказа</span>
+    <span id="totalSum">0 ₽</span>
+  </div>
+  <div id="orderStatus" class="order-status"></div>
+  <button id="submitBtn" class="button primary" onclick="submitOrder()">Сделать заказ</button>
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbzMi8su6DRvZtTmHJY6guY9R10KRy_E_j_VPhlsWIgGfiZXWaxJeYwNtpn0_CYDGU7Seg/exec";
+const API="ТВОЙ_URL_APP_SCRIPT";
+let selectedSupplier=null;
+let productsData=[];
+let minOrderSum=0;
 
-let selectedSupplier = null;
-let productsData = [];
-
-/* НАВИГАЦИЯ */
-
+/* Навигация */
 function goTo(n){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen'+n).classList.add('active');
 }
 
-/* ЗАГРУЗКА ПОСТАВЩИКОВ */
+/* Toast */
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),4500);
+}
 
+/* Поставщики */
 fetch(`${API}?action=getSuppliers`)
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('suppliers');
-    data.forEach(name => {
-      const btn = document.createElement('button');
-      btn.className = "button secondary";
-      btn.textContent = name;
-      btn.onclick = () => selectSupplier(name);
-      container.appendChild(btn);
-    });
+.then(r=>r.json())
+.then(data=>{
+  const c=document.getElementById('suppliers');
+  data.forEach(name=>{
+    const b=document.createElement('button');
+    b.className="button secondary";
+    b.textContent=name;
+    b.onclick=()=>selectSupplier(name);
+    c.appendChild(b);
   });
+});
 
-/* ВЫБОР ПОСТАВЩИКА */
-
+/* Выбор поставщика */
 function selectSupplier(name){
-  selectedSupplier = name;
-
+  selectedSupplier=name;
   fetch(`${API}?action=getSupplierInfo&name=${encodeURIComponent(name)}`)
-    .then(res => res.json())
-    .then(info => {
-
-      document.getElementById('supplierInfo').innerHTML = `
-        <div class="product-row">
-          <b>${name}</b><br><br>
-          Минимальный заказ: ${info.minSum}<br>
-          Приём заказов: ${info.orderTime}<br>
-          Доставка: ${info.deliveryTime}
-        </div>
-      `;
-
-      goTo(2);
-    });
+  .then(r=>r.json())
+  .then(info=>{
+    minOrderSum=Number(info.minSum)||0;
+    document.getElementById('supplierInfo').innerHTML=`
+      <div class="product-row">
+        <b>${name}</b><br><br>
+        Минимальный заказ: ${minOrderSum} ₽<br>
+        Приём заказов: ${info.orderTime}<br>
+        Доставка: ${info.deliveryTime}
+      </div>`;
+    goTo(2);
+  });
 }
 
-  function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 4000); // показывается 4 секунды
-}
-/* ЗАГРУЗКА ТОВАРОВ */
-
+/* Загрузка товаров */
 function goToProducts(){
-
-  const date = document.getElementById('orderDate').value;
-  if(!date){
-    showToast('Укажите дату');
-    return;
-  }
+  const date=document.getElementById('orderDate').value;
+  if(!date){showToast("Укажите дату");return;}
 
   fetch(`${API}?action=getProducts&name=${encodeURIComponent(selectedSupplier)}`)
-    .then(res => res.json())
-    .then(data => {
-
-      productsData = data;
-      const container = document.getElementById('products');
-      container.innerHTML = '';
-
-      data.forEach((p, i) => {
-        container.innerHTML += `
-          <div class="product-row" id="row_${i}">
-            <div class="product-title">${p.name}</div>
-
-            <div class="controls-line">
-              <div class="controls">
-                <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-                <span id="qty_${i}" class="qty-value">0</span>
-                <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
-              </div>
-
-              <div class="pack">${p.pack}</div>
-            </div>
+  .then(r=>r.json())
+  .then(data=>{
+    productsData=data;
+    const c=document.getElementById('products');
+    c.innerHTML="";
+    data.forEach((p,i)=>{
+      c.innerHTML+=`
+      <div class="product-row" id="row_${i}">
+        <div class="product-title">${p.name}</div>
+        <div class="controls-line">
+          <div class="controls">
+            <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+            <span id="qty_${i}" class="qty-value">0</span>
+            <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
           </div>
-        `;
-      });
-
-      goTo(3);
+          <div class="pack">${p.pack}</div>
+        </div>
+      </div>`;
     });
+    goTo(3);
+  });
 }
 
-/* ИЗМЕНЕНИЕ КОЛИЧЕСТВА */
-
-function changeQty(i, delta){
-  let el = document.getElementById('qty_'+i);
-  let val = parseInt(el.textContent);
-  val += delta;
-  if(val < 0) val = 0;
-  el.textContent = val;
-
-  const row = document.getElementById('row_'+i);
-
-  if(val > 0){
-    row.classList.add('active');
-  } else {
-    row.classList.remove('active');
-  }
+/* Изменение количества */
+function changeQty(i,d){
+  const el=document.getElementById('qty_'+i);
+  let v=parseInt(el.textContent)+d;
+  if(v<0)v=0;
+  el.textContent=v;
+  document.getElementById('row_'+i)
+    .classList.toggle('active',v>0);
 }
 
-/* ОТПРАВКА */
+/* Проверка */
+function openReview(){
+  const list=document.getElementById('reviewList');
+  list.innerHTML="";
+  let total=0;
 
-function submitOrder(){
-
-  const dateRaw = document.getElementById('orderDate').value;
-  const date = new Date(dateRaw);
-  const formatted = date.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
-
-  let text = `${selectedSupplier}\n`;
-  text += `Заказ на ${formatted}\n`;
-
-  productsData.forEach((p, i) => {
-    const qty = parseInt(document.getElementById('qty_'+i).textContent);
-    if(qty > 0){
-      text += `${p.name} — ${qty}\n`;
+  productsData.forEach((p,i)=>{
+    const qty=parseInt(document.getElementById('qty_'+i).textContent);
+    if(qty>0){
+      const sum=qty*(Number(p.price)||0);
+      total+=sum;
+      list.innerHTML+=`
+      <div class="review-row">
+        <span>${p.name} × ${qty}</span>
+        <span>${sum} ₽</span>
+      </div>`;
     }
   });
 
-  if(text.split('\n').length <= 2){
-    showToast('Выберите товары');
+  document.getElementById('totalSum').textContent=total+" ₽";
+
+  const status=document.getElementById('orderStatus');
+  const btn=document.getElementById('submitBtn');
+
+  if(total>=minOrderSum){
+    status.innerHTML="✅ Всё окей, заказывай!";
+    status.style.color="green";
+    btn.disabled=false;
+  }else{
+    status.innerHTML="❌ Минимальная сумма заказа не набрана.";
+    status.style.color="red";
+    btn.disabled=true;
+    showToast("Минимальная сумма не набрана");
+  }
+
+  goTo(4);
+}
+
+/* Отправка */
+function submitOrder(){
+  if(document.getElementById('submitBtn').disabled){
+    showToast("Сумма меньше минимальной");
     return;
   }
-  
-  navigator.clipboard.writeText(text).then(() => {
-   showToast('🐺 Волчок выходит на охоту. Отправь заказ в ТГ!');
-  });
 
-  fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      text: text,
-      supplier: selectedSupplier,
-      date: formatted
-    })
-  });
-
+  showToast("🐺 Заказ сохранён. Отправь его в ТГ!");
   goTo(1);
 }
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/bakery-order/sw.js');
-}
+
+/* Сброс даты */
+window.addEventListener("load",()=>{
+  document.getElementById("orderDate").value="";
+});
+
 </script>
-<div id="toast" class="toast"></div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
