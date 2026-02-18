@@ -283,7 +283,7 @@ function goToProducts(){
 
   const date = document.getElementById('orderDate').value;
   if(!date){
-    alert('Укажите дату');
+    showToast('Укажите дату');
     return;
   }
 
@@ -354,12 +354,22 @@ function submitOrder(){
   });
 
   if(text.split('\n').length <= 2){
-    alert('Выберите товары');
+    showToast('Выберите товары');
     return;
   }
 
+  function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
+  
   navigator.clipboard.writeText(text).then(() => {
-    alert('🐺 Волчок выходит на охоту. Заказ скопирован. Отправь его в ТГ!');
+   showToast('🐺 Волчок выходит на охоту. Отправь заказ в ТГ!');
   });
 
   fetch(API, {
@@ -380,6 +390,7 @@ if ('serviceWorker' in navigator) {
 <div id="toast" class="toast"></div>
 </body>
 </html>
+
 
 
 
