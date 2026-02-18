@@ -72,6 +72,31 @@ input[type="date"]{
   transform:translateX(-50%) translateY(0);
   opacity:1
 }
+  .section-block{
+  margin-bottom:14px;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.section-header{
+  background:#111;
+  color:#fff;
+  padding:16px;
+  font-weight:600;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.section-products{
+  display:none;
+  background:#f9fafb;
+  padding:12px;
+}
+
+.section-products.open{
+  display:block;
+}
 </style>
 </head>
 <body>
@@ -165,31 +190,87 @@ function selectSupplier(name){
 
 /* Загрузка товаров */
 function goToProducts(){
-  const date=document.getElementById('orderDate').value;
-  if(!date){showToast("Укажите дату");return;}
+
+  const date = document.getElementById('orderDate').value;
+  if(!date){
+    showToast("Укажите дату");
+    return;
+  }
 
   fetch(`${API}?action=getProducts&name=${encodeURIComponent(selectedSupplier)}`)
   .then(r=>r.json())
   .then(data=>{
-    productsData=data;
-    const c=document.getElementById('products');
-    c.innerHTML="";
+
+    productsData = data;
+    const container = document.getElementById('products');
+    container.innerHTML = "";
+
+    /* ===== ОБЫЧНЫЕ ПОСТАВЩИКИ ===== */
+    if(selectedSupplier !== "Европа Маркет"){
+
+      data.forEach((p,i)=>{
+        container.innerHTML += renderProduct(p,i);
+      });
+
+      goTo(3);
+      return;
+    }
+
+    /* ===== ЛОГИКА ДЛЯ ЕВРОПА МАРКЕТ ===== */
+
+    let currentSection = null;
+    let sectionIndex = 0;
+
     data.forEach((p,i)=>{
-      c.innerHTML+=`
-      <div class="product-row" id="row_${i}">
-        <div class="product-title">${p.name}</div>
-        <div class="controls-line">
-          <div class="controls">
-            <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-            <span id="qty_${i}" class="qty-value">0</span>
-            <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+
+      // Если pack пустой — это заголовок раздела
+      if(!p.pack){
+
+        currentSection = `section_${sectionIndex++}`;
+
+        container.innerHTML += `
+          <div class="section-block">
+            <div class="section-header"
+                 onclick="toggleSection('${currentSection}')">
+              ${p.name}
+            </div>
+            <div class="section-products" id="${currentSection}">
+            </div>
           </div>
-          <div class="pack">${p.pack}</div>
-        </div>
-      </div>`;
+        `;
+
+      } else {
+
+        if(currentSection){
+          document.getElementById(currentSection).innerHTML += renderProduct(p,i);
+        }
+      }
+
     });
+
     goTo(3);
   });
+}
+
+function renderProduct(p,i){
+  return `
+    <div class="product-row" id="row_${i}">
+      <div class="product-title">${p.name}</div>
+      <div class="controls-line">
+        <div class="controls">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <span id="qty_${i}" class="qty-value">0</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+        <div class="pack">${p.pack || ""}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleSection(id){
+  const el = document.getElementById(id);
+  el.classList.toggle("open");
 }
 
 /* Изменение количества */
@@ -204,37 +285,90 @@ function changeQty(i,d){
 
 /* Проверка */
 function openReview(){
-  const list=document.getElementById('reviewList');
-  list.innerHTML="";
-  let total=0;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = "";
+
+  let total = 0;
+  let totalUnits = 0; // для "Сиропы"
 
   productsData.forEach((p,i)=>{
-    const qty=parseInt(document.getElementById('qty_'+i).textContent);
+    const qty = parseInt(document.getElementById('qty_'+i).textContent);
     if(qty>0){
-      const sum=qty*(Number(p.price)||0);
-      total+=sum;
-      list.innerHTML+=`
-      <div class="review-row">
-        <span>${p.name} × ${qty}</span>
-        <span>${sum} ₽</span>
-      </div>`;
+
+      const price = Number(p.price) || 0;
+      const sum = qty * price;
+
+      total += sum;
+      totalUnits += qty;
+
+      list.innerHTML += `
+        <div class="review-row">
+          <span>${p.name} × ${qty}</span>
+          <span>${sum} ₽</span>
+        </div>
+      `;
     }
   });
 
-  document.getElementById('totalSum').textContent=total+" ₽";
+  document.getElementById('totalSum').textContent = total + " ₽";
 
-  const status=document.getElementById('orderStatus');
-  const btn=document.getElementById('submitBtn');
+  const status = document.getElementById('orderStatus');
+  const btn = document.getElementById('submitBtn');
 
-  if(total>=minOrderSum){
-    status.innerHTML="✅ Всё окей, заказывай!";
-    status.style.color="green";
-    btn.disabled=false;
-  }else{
-    status.innerHTML="❌ Минимальная сумма заказа не набрана.";
-    status.style.color="red";
-    btn.disabled=true;
-    showToast("Минимальная сумма не набрана");
+  let finalTotal = total; // для случая с доставкой
+
+  /* ===== ЛОГИКА ДЛЯ "СИРОПЫ" ===== */
+
+  if(selectedSupplier === "Сиропы"){
+
+    list.innerHTML += `
+      <div class="divider"></div>
+      <div class="review-row">
+        <span><b>Количество бутылок</b></span>
+        <span><b>${totalUnits}</b></span>
+      </div>
+    `;
+
+    if(totalUnits < 12){
+
+      list.innerHTML += `
+        <div class="review-row">
+          <span>Стоимость доставки</span>
+          <span>+300 ₽</span>
+        </div>
+        <div style="font-size:14px;margin-bottom:10px;color:#555">
+          Бесплатная доставка от 12 бутылок
+        </div>
+      `;
+
+      finalTotal = total + 300;
+
+      list.innerHTML += `
+        <div class="review-row">
+          <span><b>Сумма заказа с доставкой</b></span>
+          <span><b>${finalTotal} ₽</b></span>
+        </div>
+      `;
+    }
+  }
+
+  /* ===== ПРОВЕРКА МИНИМАЛКИ ===== */
+
+  if(finalTotal >= minOrderSum){
+
+    status.innerHTML = "✅ Всё окей, заказывай!";
+    status.style.color = "green";
+    btn.disabled = false;
+
+  } else {
+
+    const diff = minOrderSum - finalTotal;
+
+    status.innerHTML = `
+      ❌ Минимальная сумма заказа ${minOrderSum} ₽ не набрана.<br> Добавь товар на сумму ${diff} ₽.`;
+    status.style.color = "red";
+    btn.disabled = true;
   }
 
   goTo(4);
@@ -293,5 +427,6 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
