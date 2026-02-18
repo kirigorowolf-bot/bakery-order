@@ -321,7 +321,8 @@ function openReview(){
   /* ===== ЛОГИКА ДЛЯ "СИРОПЫ" ===== */
 
   if(selectedSupplier === "Сиропы"){
-
+  document.getElementById('totalSum').textContent = total + " ₽";
+   
     list.innerHTML += `
       <div class="divider"></div>
       <div class="review-row">
@@ -427,6 +428,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
