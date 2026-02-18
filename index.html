@@ -183,6 +183,26 @@ input[type="date"] {
     padding: 16px;
   }
 }
+  .toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #111;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 16px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 </style>
 </head>
 <body>
@@ -357,8 +377,10 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/bakery-order/sw.js');
 }
 </script>
+<div id="toast" class="toast"></div>
 </body>
 </html>
+
 
 
 
