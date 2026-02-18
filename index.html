@@ -300,7 +300,7 @@ function openReview(){
     btn.disabled=false;
   }else{
     const diff=(minOrderSum-finalTotal).toFixed(2);
-    status.innerHTML=`❌ Минимальная сумма заказа ${minOrderSum} ₽ не набрана. Добавь товар на сумму ${diff} ₽.`;
+    status.innerHTML=`❌ Минимальная сумма заказа ${minOrderSum} ₽.<br>Добавь товар на сумму ${diff} ₽.`;
     status.style.color="red";
     btn.disabled=true;
   }
@@ -345,3 +345,4 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
