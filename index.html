@@ -80,7 +80,7 @@ input[type="date"]{
 }
 
 .section-header{
-  background:#e6f2ff;        /* бледно-голубой */
+  background:#c0ddfc;        /* бледно-голубой */
   color:#111;                /* чёрный текст */
   padding:18px;
   font-weight:600;
@@ -251,7 +251,7 @@ function goToProducts(){
             <div class="section-header"
      onclick="toggleSection('${currentSection}', this)">
   <span>${p.name}</span>
-  <span class="section-arrow">⮟</span>
+  <span class="section-arrow">▼</span>
 </div>
             <div class="section-products" id="${currentSection}">
             </div>
@@ -448,6 +448,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
