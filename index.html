@@ -377,7 +377,6 @@ function openReview(){
   }
 
   /* ===== ПРОВЕРКА МИНИМАЛКИ ===== */
-  if(selectedSupplier !== "Сиропы"){ 
   if(finalTotal >= minOrderSum){
 
     status.innerHTML = "✅ Всё окей, заказывай!";
@@ -395,7 +394,6 @@ function openReview(){
   }
 
   goTo(4);
-}
 }
 /* Отправка */
 function submitOrder(){
@@ -450,6 +448,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
