@@ -185,16 +185,21 @@ input[type="date"] {
 }
   .toast {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  transform: translateX(-50%) translateY(-120%);
   background: #111;
   color: white;
-  padding: 14px 20px;
-  border-radius: 14px;
-  font-size: 16px;
+  padding: 20px 24px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: all 0.35s ease;
   z-index: 999;
 }
 
@@ -216,7 +221,7 @@ input[type="date"] {
   <button class="back" onclick="goTo(1)">← Назад</button>
   <div id="supplierInfo"></div>
   <div>Заказ на:</div>
-  <input type="date" id="orderDate">
+  <input type="date" id="orderDate" autocomplete="off">
   <button class="button primary" onclick="goToProducts()">Выбрать добычу</button>
 </div>
 
@@ -277,6 +282,15 @@ function selectSupplier(name){
     });
 }
 
+  function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 4000); // показывается 4 секунды
+}
 /* ЗАГРУЗКА ТОВАРОВ */
 
 function goToProducts(){
@@ -357,16 +371,6 @@ function submitOrder(){
     showToast('Выберите товары');
     return;
   }
-
-  function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2500);
-}
   
   navigator.clipboard.writeText(text).then(() => {
    showToast('🐺 Волчок выходит на охоту. Отправь заказ в ТГ!');
@@ -390,6 +394,7 @@ if ('serviceWorker' in navigator) {
 <div id="toast" class="toast"></div>
 </body>
 </html>
+
 
 
 
