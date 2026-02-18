@@ -242,14 +242,48 @@ function openReview(){
 
 /* Отправка */
 function submitOrder(){
-  if(document.getElementById('submitBtn').disabled){
+
+  const btn = document.getElementById('submitBtn');
+  if(btn.disabled){
     showToast("Сумма меньше минимальной");
     return;
   }
 
-  showToast("🐺 Заказ сохранён. Отправь его в ТГ!");
+  const dateRaw = document.getElementById('orderDate').value;
+  const date = new Date(dateRaw);
+  const formatted = date.toLocaleDateString('ru-RU', {
+    day:'2-digit',
+    month:'2-digit'
+  });
+
+  let text = `${selectedSupplier}\n`;
+  text += `Заказ на ${formatted}\n`;
+
+  productsData.forEach((p,i)=>{
+    const qty = parseInt(document.getElementById('qty_'+i).textContent);
+    if(qty>0){
+      text += `${p.name} — ${qty}\n`;
+    }
+  });
+
+  // Копирование в буфер
+  navigator.clipboard.writeText(text);
+
+  // Отправка в Google Sheets
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      text:text,
+      supplier:selectedSupplier,
+      date:formatted
+    })
+  });
+
+  showToast("🐺 Волчок выходит на охоту. Отправь заказ в ТГ!");
+
   goTo(1);
 }
+
 
 /* Сброс даты */
 window.addEventListener("load",()=>{
@@ -259,4 +293,5 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
