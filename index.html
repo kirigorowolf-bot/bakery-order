@@ -8,6 +8,7 @@
 <title>Provance Orders</title>
 
 <style>
+  
 *{box-sizing:border-box}
 html,body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f4f6f9;}
 .screen{display:none;padding:20px}
@@ -59,7 +60,20 @@ background:#111;color:#fff;padding:20px;border-radius:18px;width:90%;max-width:4
 text-align:center;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);
 opacity:0;transition:.35s;z-index:999}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.mini-btn{
+  background:#e6f2ff;
+  border:none;
+  padding:8px 14px;
+  border-radius:12px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
 
+.mini-btn:active{
+  transform:scale(0.95);
+  background:#d6eaff;
+}
 /* Европа Маркет */
 .section-block{margin-bottom:14px;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.05)}
 .section-header{
@@ -104,6 +118,26 @@ opacity:0;transition:.35s;z-index:999}
   </div>
   <div id="orderStatus" class="order-status"></div>
   <button id="submitBtn" class="button primary" onclick="submitOrder()">Сделать заказ</button>
+</div>
+<div style="margin-top:20px; text-align:center;">
+
+  <div style="font-size:14px; margin-bottom:10px; opacity:0.8;">
+    Поблагодарить за заказ:
+  </div>
+
+  <div style="display:flex; justify-content:center; gap:10px;">
+
+    <button class="mini-btn"
+      onclick="showToast('Уву-ву, ауф! 🖤🐺')">
+      Лизнуть
+    </button>
+
+    <button class="mini-btn"
+      onclick="showToast('Ву-вуф, и вам того же! 🐺')">
+      Вильнуть хвостом
+    </button>
+
+  </div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -345,5 +379,6 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
