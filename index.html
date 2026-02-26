@@ -84,6 +84,48 @@ opacity:0;transition:.35s;z-index:999}
 .section-arrow.rotate{transform:rotate(180deg)}
 .section-products{display:none;background:#f9fafb;padding:12px}
 .section-products.open{display:block}
+
+/* ===== Предыдущий заказ ===== */
+
+.last-order-label{
+  font-size:14px;
+  margin-top:12px;
+  margin-bottom:6px;
+  opacity:.8;
+}
+
+.last-order-header{
+  background:#e6f2ff;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+}
+
+.last-order-arrow{
+  transition:.25s;
+}
+
+.last-order-arrow.rotate{
+  transform:rotate(180deg);
+}
+
+.last-order-body{
+  display:none;
+  background:#f9fafb;
+  padding:12px;
+  border-radius:12px;
+  margin-top:6px;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.last-order-body.open{
+  display:block;
+}
 </style>
 </head>
 <body>
@@ -99,6 +141,7 @@ opacity:0;transition:.35s;z-index:999}
   <div>Заказ на:</div>
   <input type="date" id="orderDate">
   <button class="button primary" onclick="goToProducts()">Выбрать добычу</button>
+  <div id="lastOrderContainer"></div>
 </div>
 
 <div id="screen3" class="screen">
@@ -187,6 +230,7 @@ function selectSupplier(name){
         Доставка: ${info.deliveryTime}
       </div>`;
     goTo(2);
+    loadLastOrder(name);
   });
 }
 
@@ -375,10 +419,45 @@ function submitOrder(){
 window.addEventListener("load",()=>{
   document.getElementById("orderDate").value="";
 });
+
+  function loadLastOrder(supplier){
+
+  fetch(`${API}?action=getLastOrder&name=${encodeURIComponent(supplier)}`)
+  .then(r=>r.json())
+  .then(data=>{
+
+    const container=document.getElementById("lastOrderContainer");
+    container.innerHTML="";
+
+    if(!data) return;
+
+    const date=new Date(data.createdAt);
+    const formatted=date.toLocaleDateString("ru-RU");
+
+    container.innerHTML=`
+      <div class="last-order-label">
+        Предыдущий заказ сделан:
+      </div>
+
+      <div class="last-order-header" onclick="toggleLastOrder(this)">
+        <span>${formatted}</span>
+        <span class="last-order-arrow">⮟</span>
+      </div>
+
+      <div class="last-order-body">
+        ${data.text.replace(/\n/g,"<br>")}
+      </div>
+    `;
+  });
+}
+
+function toggleLastOrder(el){
+  const body=el.nextElementSibling;
+  const arrow=el.querySelector(".last-order-arrow");
+  body.classList.toggle("open");
+  arrow.classList.toggle("rotate");
+}
 </script>
 </body>
 </html>
-
-
-
 
