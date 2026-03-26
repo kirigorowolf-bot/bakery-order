@@ -325,12 +325,15 @@ function openReview(){
       total+=sum;
       totalUnits+=qty;
 
+      let displayName = (selectedSupplier === "Артис" && p.extraPack) 
+                        ? `${p.name} × ${qty} ${p.extraPack}` 
+                        : `${p.name} × ${qty}`;
+
       list.innerHTML+=`
         <div class="review-row">
-          <div class="review-name">${p.name} × ${qty}</div>
+          <div class="review-name">${displayName}</div>
           <div class="review-price">${sum.toFixed(2)} ₽</div>
         </div>`;
-    }
   });
 
   let finalTotal=total;
