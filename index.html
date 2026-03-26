@@ -402,14 +402,12 @@ function submitOrder(){
     if(!p.pack) return;
     const qty=parseInt(document.getElementById('qty_'+i)?.textContent||0);
     if (qty > 0) {
-  let productName = p.name;
-  // Если поставщик Артис и есть доп. упаковка в свойстве extraPack (столбец J)
-  if (selectedSupplier === "Артис" && p.extraPack) {
-    productName += ` (${p.extraPack})`;
-  }
-  text+=`${p.name} — ${qty}\n`;
-}
-
+      let line = `${p.name} — ${qty}`;
+      if (selectedSupplier === "Артис" && p.extraPack) {
+        line += ` ${p.extraPack}`;
+      }
+      text += line + "\n";
+    }
   });
 
   navigator.clipboard.writeText(text);
