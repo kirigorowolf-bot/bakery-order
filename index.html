@@ -276,19 +276,22 @@ function goToProducts(){
   });
 }
 
-function renderProduct(p,i){
+function renderProduct(p, i) {
+  // Если у товара есть заданный шаг (из столбца C), используем его, иначе 1
+  const step = (p.step && p.step > 0) ? p.step : 1;
+  
   return `
-  <div class="product-row" id="row_${i}">
-    <div class="product-title">${p.name}</div>
-    <div class="controls-line">
-      <div class="controls">
-        <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-        <span id="qty_${i}" class="qty-value">0</span>
-        <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
-      </div>
-      <div class="pack">${p.pack||""}</div>
-    </div>
-  </div>`;
+ <div class="product-row" id="row_${i}">
+ <div class="product-title">${p.name}</div>
+ <div class="controls-line">
+ <div class="controls">
+ <button class="qty-btn" onclick="changeQty(${i}, -${step})">−</button>
+ <span id="qty_${i}" class="qty-value">0</span>
+ <button class="qty-btn" onclick="changeQty(${i}, ${step})">+</button>
+ </div>
+ <div class="pack">${p.pack || ""}</div>
+ </div>
+ </div>`;
 }
 
 function toggleSection(id,header){
